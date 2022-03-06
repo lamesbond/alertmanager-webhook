@@ -1,0 +1,86 @@
+import json
+import datetime
+import uuid
+
+import requests
+
+CORP_ID = "wwd4c0cabaa5479e2b"
+SECRET = "fgAXG0M1E-VOYJH-oA2_aCCdV1YKL28njGHKb_XtLLo"
+
+class WeChatPub:
+    s = requests.session()
+
+    def __init__(self):
+        self.token = self.get_token()
+
+    def get_token(self):
+        url = f"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={CORP_ID}&corpsecret={SECRET}"
+        rep = self.s.get(url)
+        if rep.status_code != 200:
+            print("request failed.")
+            return
+        return json.loads(rep.content)['access_token']
+
+
+    def send_msg(self,task_id,alertfingerprint,alertname,alertinstance,alertservice,alertdesc):
+        url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + self.token
+        header = {
+            "Content-Type": "application/json"
+        }
+        form_data = {
+            "touser" : "@all",
+            "toparty" : "PartyID1 | PartyID2",
+            "totag" : "TagID1 | TagID2",
+            "msgtype" : "template_card",
+            "agentid" : 1000002,
+            "template_card" : {
+                "card_type" : "button_interaction",
+                "main_title" : {
+                    "title" : "告警"
+                },
+                "horizontal_content_list" : [
+                    {
+                        "type" : 0,
+                        "keyname" : "告警名称：",
+                        "value" : alertname
+                    },
+                    {
+                        "type": 0,
+                        "keyname": "告警主机：",
+                        "value": alertinstance
+                    },
+                    {
+                        "type": 0,
+                        "keyname": "告警服务：",
+                        "value": alertservice
+                    },
+                    {
+                        "type": 0,
+                        "keyname": "告警详情：",
+                        "value" : alertdesc
+                    }
+                ],
+                "task_id": task_id,
+                "button_list": [
+                    {
+                        "text": "认领",
+                        "style": 2,
+                        "key": alertfingerprint
+                    }
+                ]
+            },
+            "enable_id_trans": 0,
+            "enable_duplicate_check": 0,
+            "duplicate_check_interval": 1800
+        }
+        rep = self.s.post(url, data=json.dumps(form_data).encode('utf-8'), headers=header)
+        # print(rep.text)
+        if rep.status_code != 200:
+            print("request failed.")
+            return
+        return json.loads(rep.content)
+
+if __name__ == '__main__':
+    wechat = WeChatPub()
+    task_id = str(uuid.uuid1())
+    wechat.send_msg(task_id)
