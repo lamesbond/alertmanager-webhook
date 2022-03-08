@@ -6,12 +6,15 @@ import sys
 import json
 import uuid
 
-from wechat_send_demos.wechatsendapptemplate_card_button_interaction_update import WeChatPub as WeChatPub_update
-from wechat_send_demos.wechatsendapptemplate_card_button_interaction import WeChatPub as WeChatPub_send
+from wechatsend_claim import WeChatPub as WeChatPub_claim
+from wechatsend_firing import WeChatPub as WeChatPub_firing
+from wechatsend_firing import WeChatPub as WeChatPub_resolved
 
 app = Flask(__name__)
-claim_list = []
-response_code_list = []
+alert_dict={}
+wechat_firing = WeChatPub_firing()
+wechat_resolved = WeChatPub_resolved()
+wechat_claim = WeChatPub_claim()
 
 @app.route('/wechat_callback',methods=['GET','POST'])
 def index():
@@ -47,23 +50,22 @@ def index():
             sys.exit(1)
 
         xml_tree = ET.fromstring(sMsg)
-        for claimant in xml_tree.findall('FromUserName'):
-            print("认领人：",claimant.text)
-        for response_code in xml_tree.findall('ResponseCode'):
-            response_code = response_code.text
-        for event_key in xml_tree.findall('EventKey'):
-            event_key = event_key.text
-        print("EventKey：",event_key,"已被认领")
-        claim_list.append(event_key)
+        for FromUserName in xml_tree.findall('FromUserName'):
+            claimant = FromUserName.text
+#        for response_code in xml_tree.findall('ResponseCode'):
+#            response_code = response_code.text
+        for EventKey in xml_tree.findall('EventKey'):
+            alertfingerprint = EventKey.text
 
-        wechat = WeChatPub_update()
-        for response_code in response_code_list:
-            wechat.send_msg(response_code,claimant.text)
+        response_code = alert_dict[alertfingerprint]
+        wechat_claim.send_msg(response_code,claimant)
+        alert_dict[alertfingerprint]='claimed'
+        print("告警ID：",alertfingerprint,"已被",claimant,"认领")
 
     if( ret!=0 ):
         print("ERR: EncryptMsg ret: " + ret)
         sys.exit(1)
-    return
+    return '认领成功'
 
 @app.route('/wechat_send', methods=['POST'])
 def send():
@@ -72,27 +74,29 @@ def send():
         alerts = data['alerts']
 
         for i in alerts:
-            info = i.get('labels')
+            labels = i.get('labels')
             task_id = str(uuid.uuid1())
+            alertstatus = i.get('status')
             alertfingerprint = i.get('fingerprint')
-            alertname = info['alertname']
-            alertinstance = info['instance']
-            alertservice = info['service']
-            alertdesc = i.get('annotations')['description']
-            print(alertname)
-            print(alertinstance)
-            print(alertservice)
-            print(alertdesc)
-            if alertfingerprint in claim_list:
-                print("告警",alertfingerprint,"已被认领，将不会发送")
-                return 200
-            wechat = WeChatPub_send()
-            response_code = wechat.send_msg(task_id,alertfingerprint,alertname,alertinstance,alertservice,alertdesc)
-            response_code_list.append(response_code.get('response_code'))
-            print(response_code_list)
+            alertname = labels['alertname']
+            alertinstance = labels['instance']
+            alertdesc = i.get('annotations').get('description')
+
+            if alertstatus == 'firing':
+                if alertfingerprint in alert_dict.keys() and alert_dict[alertfingerprint] == 'claimed':
+                    print("告警", alertfingerprint, "已被认领，将不会发送")
+                    continue
+                else:
+                    response_code = wechat_firing.send_msg(task_id, alertfingerprint, alertname, alertinstance, alertdesc)['response_code']
+                    alert_dict[alertfingerprint] = response_code
+            if alertstatus == 'resolved':
+                wechat_resolved.send_msg()
+                alert_dict[alertfingerprint] = 'resolved'
+
+        print("fingerprint与response code对应表：",alert_dict)
     except Exception as e:
         print(e)
-    return 'ok'
+    return '发送成功'
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000,debug=True)
+    app.run(host='0.0.0.0',port=9096,debug=True)
