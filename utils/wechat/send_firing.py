@@ -1,26 +1,11 @@
 import json
 import requests
 
-CORP_ID = "wwd4c0cabaa5479e2b"
-SECRET = "fgAXG0M1E-VOYJH-oA2_aCCdV1YKL28njGHKb_XtLLo"
-
 class WeChatPub:
     s = requests.session()
 
-    def __init__(self):
-        self.token = self.get_token()
-
-    def get_token(self):
-        url = f"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={CORP_ID}&corpsecret={SECRET}"
-        rep = self.s.get(url)
-        if rep.status_code != 200:
-            print("request failed.")
-            return
-        return json.loads(rep.content)['access_token']
-
-
-    def send_msg(self,task_id,alertfingerprint,alertname,alertinstance,alertdesc):
-        url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + self.token
+    def send_msg(self,wechat_access_token,task_id,alertfingerprint,alertname,alertinstance,alertdesc,alertstartsat):
+        url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + wechat_access_token
         header = {
             "Content-Type": "application/json"
         }
@@ -50,6 +35,11 @@ class WeChatPub:
                         "type": 0,
                         "keyname": "告警详情：",
                         "value" : alertdesc
+                    },
+                    {
+                        "type": 0,
+                        "keyname": "开始时间：",
+                        "value" : alertstartsat
                     }
                 ],
                 "task_id": task_id,
@@ -71,7 +61,3 @@ class WeChatPub:
             print("request failed.")
             return
         return json.loads(rep.content)
-
-if __name__ == '__main__':
-    wechat = WeChatPub()
-    wechat.send_msg()
