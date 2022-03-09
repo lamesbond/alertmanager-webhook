@@ -4,7 +4,7 @@ from global_vars import WECHAT_CORP_ID, WECHAT_SECRET, app
 from routes.wechat_callback import app_wechat_callback
 from routes.wechat_send import app_wechat_send
 from routes.metrics import app_metrics
-from utils.wechat.update_access_token import update_wechat_access_token
+from utils.wechat.timed_task import update_wechat_access_token, check_alert_claims
 
 app.register_blueprint(app_wechat_callback)
 app.register_blueprint(app_wechat_send)
@@ -18,6 +18,12 @@ class Config(object):
             'args': (WECHAT_CORP_ID, WECHAT_SECRET),
             'trigger': 'interval',
             'seconds': 7200
+        },
+        {
+            'id': 'check_alert_claims',
+            'func': '__main__:check_alert_claims',
+            'trigger': 'interval',
+            'seconds': 60
         }
     ]
 

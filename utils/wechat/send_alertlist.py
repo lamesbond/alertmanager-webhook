@@ -7,14 +7,16 @@ class WeChatPub:
         if not alertlist:
             context = "暂无告警"
         else:
-            context = "#  <font color=\"warning\">告警列表：</font>\n"
+            context = ""
             for key in alertlist:
                 if alertlist[key]['status'] == 'resolved':
                     continue
                 else:
-                    context=context+"\n告警ID："+key+"\n告警状态："+alertlist[key]['status']+"\n<font color=\"warning\">告警名称：</font>"+alertlist[key]['alertname']+"\n告警主机："+alertlist[key]['alertinstance']+"\n告警详情："+alertlist[key]['alertdesc']+"<br/>"
+                    context=context+"\n告警ID："+key+"\n告警状态："+alertlist[key]['status']+"\n<font color=\"warning\">告警名称：</font>"+alertlist[key]['alertname']+"\n告警主机："+alertlist[key]['alertinstance']+"\n告警详情："+alertlist[key]['alertdesc']+"\n开始时间："+alertlist[key]['alertstartsat']+"<br/>"
             if not context:
                 context = "告警已解决"
+            else:
+                context = "#  <font color=\"warning\">告警列表：</font>\n"+context
 
         url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + wechat_access_token
         header = {

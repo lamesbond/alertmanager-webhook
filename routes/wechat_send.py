@@ -1,5 +1,7 @@
 #-*- coding:utf-8 -*-
+import datetime
 import json
+import time
 import uuid
 
 from flask import request, Blueprint
@@ -14,14 +16,13 @@ def send():
         alerts = data['alerts']
 
         for i in alerts:
-            labels = i.get('labels')
             task_id = str(uuid.uuid1())
-            alertstatus = i.get('status')
-            alertfingerprint = i.get('fingerprint')
-            alertname = labels['alertname']
-            alertinstance = labels['instance']
-            alertdesc = i.get('annotations').get('description')
-            alertstartsat = i.get('startsAt')
+            alertstatus = i['status']
+            alertfingerprint = i['fingerprint']
+            alertname = i['labels']['alertname']
+            alertinstance = i['labels']['instance']
+            alertdesc = i['annotations']['description']
+            alertstartsat = (datetime.datetime.strptime(i['startsAt'],"%Y-%m-%dT%H:%M:%S.%fZ") + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")+" CST"
 
             global_vars.alert_dict[alertfingerprint] = {}
             global_vars.alert_dict[alertfingerprint]['alertname'] = alertname

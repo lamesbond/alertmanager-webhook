@@ -1,3 +1,7 @@
+import time
+import datetime
+import pytz
+
 import requests
 from flask_apscheduler import APScheduler
 from flask import Flask
@@ -38,8 +42,35 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    requests.post()
-    scheduler = APScheduler()  # 实例化APScheduler
-    scheduler.init_app(app)  # 把任务列表放进flask
-    scheduler.start()  # 启动任务列表
-    app.run()  # 启动flask
+    startsat = "2022-03-09T13:55:54.343Z"
+    # startsattimestamp=time.mktime(time.strptime(startsat, "%Y-%m-%dT%H:%M:%S.%fZ"))
+    # startsat_normal=datetime.utcfromtimestamp(startsattimestamp).strftime("%Y-%m-%d %H:%M:%S")
+    # print(startsat_normal)
+
+    d1 = datetime.datetime.strptime(startsat,"%Y-%m-%dT%H:%M:%S.%fZ")
+    d8 = (datetime.datetime.strptime(startsat,"%Y-%m-%dT%H:%M:%S.%fZ") + datetime.timedelta(hours=8))
+    # d9 = datetime.datetime.strptime(d8,"%Y-%m-%d %H:%M:%S")
+    print(d8)
+    d2 = datetime.datetime.now()
+    if isinstance(d8,str):
+        print("是世家格式")
+    interval = d2-d8
+    print(interval)
+    interval_min = interval.seconds
+    print(interval_min)
+    if isinstance(interval_min,int):
+        print("intercalmin是证书")
+
+    zfc='2022-03-09 23:10:54 CST'
+    print(zfc.replace(" CST",""))
+    print(len(zfc))
+    print(len(zfc.replace(" CST","")))
+
+        # .astimezone(timezone(timedelta(hours=16)))
+    # print(str(start))
+    # # current_time = (datetime.now() + datetime.timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
+    # # print(str(current_time))
+    # if isinstance(start, datetime):
+    #     print("是时间格式")
+    # elif isinstance(start, str):
+    #     print("是字符串")
