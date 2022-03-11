@@ -1,7 +1,6 @@
 #-*- coding:utf-8 -*-
 import datetime
 import json
-import time
 import uuid
 
 from flask import request, Blueprint

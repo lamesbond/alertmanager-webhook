@@ -7,12 +7,10 @@ from utils.wechat.WXBizMsgCrypt3 import WXBizMsgCrypt
 import xml.etree.cElementTree as ET
 import sys
 app_wechat_callback = Blueprint("app_wechat_callback",__name__)
+
 @app_wechat_callback.route('/wechat_callback',methods=['GET','POST'])
 def index():
-    s_token = "zI49d9BrPYP6nPH6GfkbHuHiTunQLonF"
-    s_encoding_asekey = "cMklFT1ZeRUf8r2Dh4ofh7vqseX9ZPTbusJMZG1mDvX"
-    s_corp_id = "wwd4c0cabaa5479e2b"
-    wxcpt=WXBizMsgCrypt(s_token,s_encoding_asekey,s_corp_id)
+    wxcpt=WXBizMsgCrypt(global_vars.WECHAT_APP_TOKEN,global_vars.WECHAT_ENCODINGAESKEY,global_vars.WECHAT_ENCODINGAESKEY)
     #获取url验证时微信发送的相关参数
     sVerifyMsgSig=request.args.get('msg_signature')
     sVerifyTimeStamp=request.args.get('timestamp')
