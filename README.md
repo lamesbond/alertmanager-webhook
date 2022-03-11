@@ -24,6 +24,7 @@ receivers:
 ![EKYVP00)6ILTRZHPX4OX~R4](https://user-images.githubusercontent.com/53105658/157871296-e842c560-7787-4488-a647-b4b71691df2a.png)
 
 告警恢复了也会通知
+
 ![P7PE45MYN}RO 5J}T8EXS5G](https://user-images.githubusercontent.com/53105658/157877161-34281626-9427-4c32-9bb1-db1ec9b3f9df.png)
 
 下面应用按钮，点击可以获取告警列表，不过单条消息有长度限制，告警太多就显示不了了
@@ -37,7 +38,7 @@ receivers:
     scrape_interval: 60s
     honor_labels: true
     static_configs:
-      - targets: ['49.234.51.183:9096']
+      - targets: ['yourhostip:9096']
 ```
 
 status是resolved就是已解决，一长串ID的就是在告警中，并且没人认领，有人认领了就显示认领人的名字
