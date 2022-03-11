@@ -12,10 +12,13 @@ url就是企业微信要访问的地址，需要是公网IP，放云上就行，
 把企业ID，应用的AgentId和Secret，回调的Token和EncodingAESKey填到项目里面
 
 alertmanager配置如下
+
+```
 receivers:
 - name: 'wechat'
   webhook_configs:
   - url: "http://yourhostip:9096/wechat_send"
+  ```
 
 告警信息如下，点击认领后按钮会更新，显示认领人的企业userID，还可以设置告警发出后多长时间没有人认领，就发送到更高一级负责人
 ![EKYVP00)6ILTRZHPX4OX~R4](https://user-images.githubusercontent.com/53105658/157871296-e842c560-7787-4488-a647-b4b71691df2a.png)
