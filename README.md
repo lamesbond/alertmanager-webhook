@@ -22,6 +22,7 @@ receivers:
 
 告警信息如下，点击认领后按钮会更新，显示认领人的企业userID，还可以设置告警发出后多长时间没有人认领，就发送到更高一级负责人
 ![EKYVP00)6ILTRZHPX4OX~R4](https://user-images.githubusercontent.com/53105658/157871296-e842c560-7787-4488-a647-b4b71691df2a.png)
+
 告警恢复了也会通知
 ![P7PE45MYN}RO 5J}T8EXS5G](https://user-images.githubusercontent.com/53105658/157877161-34281626-9427-4c32-9bb1-db1ec9b3f9df.png)
 
@@ -30,7 +31,15 @@ receivers:
 
 还可以将告警状态显示在grafana上，苦于本人没能力开发个前端页面，索性就这样做了
 在prometheus里配置
-![(AV}UK0P`LTA@Z8W`ZK}TM](https://user-images.githubusercontent.com/53105658/157878651-1142fe02-e03e-40d5-b491-cb57d27fddc2.png)
+```angular2html
+ - job_name: 'alerts_for_firing'
+    metrics_path: "/metrics"
+    scrape_interval: 60s
+    honor_labels: true
+    static_configs:
+      - targets: ['49.234.51.183:9096']
+```
+
 status是resolved就是已解决，一长串ID的就是在告警中，并且没人认领，有人认领了就显示认领人的名字
 ![9O9PCEI6}C9~BQYDCGY04DL](https://user-images.githubusercontent.com/53105658/157878422-f4e35e07-29d2-4eb2-82c3-fc6565933fd2.png)
 
