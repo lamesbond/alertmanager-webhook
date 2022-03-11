@@ -27,7 +27,8 @@ receivers:
 
 ![P7PE45MYN}RO 5J}T8EXS5G](https://user-images.githubusercontent.com/53105658/157877161-34281626-9427-4c32-9bb1-db1ec9b3f9df.png)
 
-下面应用按钮，点击可以获取告警列表，不过单条消息有长度限制，告警太多就显示不了了
+下面应用按钮，点击可以获取告警列表，不过单条消息有长度限制，告警太多就显示不了了，得在应用里先添加自定义菜单
+![img.png](img.png)
 ![PZD NT8`5D0UMW%RFY7DF$V](https://user-images.githubusercontent.com/53105658/157877803-4af04d13-1dd9-4db5-8f88-259e65580e48.png)
 
 还可以将告警状态显示在grafana上，苦于本人没能力开发个前端页面，索性就这样做了
