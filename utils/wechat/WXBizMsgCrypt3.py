@@ -16,8 +16,7 @@ from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
 import socket
 
-import ierror
-
+from utils.wechat import ierror
 
 """
 关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案
